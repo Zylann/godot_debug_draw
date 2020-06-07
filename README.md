@@ -25,3 +25,5 @@ func _process(delta):
 	DebugDraw.set_text("FPS", str(Engine.get_frames_per_second()))
 	DebugDraw.set_text("delta", str(delta))
 ```
+
+![image](https://user-images.githubusercontent.com/1311555/83977160-3f8f5280-a8f6-11ea-8dbb-696f794fcd6a.png)
