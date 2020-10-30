@@ -21,10 +21,10 @@ func _process(delta):
 
 	DebugDraw.draw_box(box_pos, Vector3(1, 2, 1), Color(0, 1, 0))
 	DebugDraw.draw_line_3d(line_begin, line_end, Color(1, 1, 0))
-	DebugDraw.set_text("Time", str(time))
-	DebugDraw.set_text("Frames drawn", str(Engine.get_frames_drawn()))
-	DebugDraw.set_text("FPS", str(Engine.get_frames_per_second()))
-	DebugDraw.set_text("delta", str(delta))
+	DebugDraw.set_text("Time", time)
+	DebugDraw.set_text("Frames drawn", Engine.get_frames_drawn())
+	DebugDraw.set_text("FPS", Engine.get_frames_per_second())
+	DebugDraw.set_text("delta", delta)
 ```
 
 ![image](https://user-images.githubusercontent.com/1311555/83977160-3f8f5280-a8f6-11ea-8dbb-696f794fcd6a.png)
