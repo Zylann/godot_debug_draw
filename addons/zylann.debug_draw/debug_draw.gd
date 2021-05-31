@@ -23,6 +23,16 @@ var _canvas_item : CanvasItem = null
 var _texts := {}
 var _font : Font = null
 
+var _canvas_parent : Node = null setget set_canvas_item_parent
+func set_canvas_item_parent(parent: Node):
+	_canvas_parent = parent
+	if _canvas_item:
+		var _canvas_item_current_parent = _canvas_item.get_parent()
+		if _canvas_item_current_parent:
+			_canvas_item_current_parent.remove_child(_canvas_item)
+		if _canvas_parent:
+			_canvas_parent.add_child(_canvas_item)
+
 # 3D
 
 var _boxes := []
@@ -167,7 +177,7 @@ func _process(delta: float):
 		_canvas_item = Node2D.new()
 		_canvas_item.position = Vector2(8, 8)
 		_canvas_item.connect("draw", self, "_on_CanvasItem_draw")
-		add_child(_canvas_item)
+		(_canvas_parent if _canvas_parent else self).add_child(_canvas_item)
 	_canvas_item.update()
 
 
