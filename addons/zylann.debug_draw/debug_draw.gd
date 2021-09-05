@@ -86,6 +86,32 @@ func draw_ray_3d(origin: Vector3, direction: Vector3, length: float, color : Col
 	draw_line_3d(origin, origin + direction * length, color)
 
 
+## @brief Draws an unshaded 3D representation of a transform's basis matrix.
+## @param transform
+## @param length: length of the lines in world units
+func draw_transform_basis(transform: Transform, length: float):
+	var origin := transform.origin
+	var basis := transform.basis
+	var g = ImmediateGeometry.new()
+	g.material_override = _get_line_material()
+	g.begin(Mesh.PRIMITIVE_LINES)
+	g.set_color(Color.red)
+	g.add_vertex(origin)
+	g.add_vertex(origin + basis.x * length)
+	g.set_color(Color.green)
+	g.add_vertex(origin)
+	g.add_vertex(origin + basis.y * length)
+	g.set_color(Color.blue)
+	g.add_vertex(origin)
+	g.add_vertex(origin + basis.z * length)
+	g.end()
+	add_child(g)
+	_lines.append({
+		"node": g,
+		"frame": Engine.get_frames_drawn() + LINES_LINGER_FRAMES,
+	})
+
+
 ## @brief Adds a text monitoring line to the HUD, from the provided value.
 ## It will be shown as such: - {key}: {text}
 ## Multiple calls with the same `key` will override previous text.
