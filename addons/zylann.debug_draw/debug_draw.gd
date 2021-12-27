@@ -89,6 +89,16 @@ func draw_transformed_cube(trans: Transform, color: Color = Color(1,1,1)):
 	})
 
 
+## @brief Draws the basis of the given transform using 3 lines
+##        of color red for X, green for Y, and blue for Z.
+## @param transform
+## @param scale: extra scale applied on top of the transform
+func draw_axes(transform: Transform, scale = 1.0):
+	draw_ray_3d(transform.origin, transform.basis.x, scale, Color(1,0,0))
+	draw_ray_3d(transform.origin, transform.basis.y, scale, Color(0,1,0))
+	draw_ray_3d(transform.origin, transform.basis.z, scale, Color(0,0,1))
+
+
 ## @brief Draws the unshaded outline of a 3D box.
 ## @param aabb: world-space box to draw as an AABB
 ## @param color
