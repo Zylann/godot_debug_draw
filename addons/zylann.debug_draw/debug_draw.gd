@@ -28,8 +28,10 @@ var _font : Font = null
 var _boxes := []
 var _box_pool := []
 var _box_mesh : Mesh = null
-var _lines := []
 var _line_material_pool := []
+
+var _lines := []
+var _line_immediate_geometry : ImmediateGeometry
 
 
 func _ready():
@@ -39,6 +41,10 @@ func _ready():
 	add_child(c)
 	_font = c.get_font("font")
 	c.queue_free()
+	
+	_line_immediate_geometry = ImmediateGeometry.new()
+	_line_immediate_geometry.material_override = _get_line_material()
+	add_child(_line_immediate_geometry)
 
 
 ## @brief Draws the unshaded outline of a 3D box.
@@ -81,18 +87,10 @@ func draw_box_aabb(aabb: AABB, color = Color(1,1,1), linger_frames = 0):
 ## @param b: end position in world units
 ## @param color
 func draw_line_3d(a: Vector3, b: Vector3, color: Color):
-	var g = ImmediateGeometry.new()
-	g.material_override = _get_line_material()
-	g.begin(Mesh.PRIMITIVE_LINES)
-	g.set_color(color)
-	g.add_vertex(a)
-	g.add_vertex(b)
-	g.end()
-	add_child(g)
-	_lines.append({
-		"node": g,
-		"frame": Engine.get_frames_drawn() + LINES_LINGER_FRAMES,
-	})
+	_lines.append([
+		a, b, color,
+		Engine.get_frames_drawn() + LINES_LINGER_FRAMES,
+	])
 
 
 ## @brief Draws an unshaded 3D line defined as a ray.
@@ -151,7 +149,13 @@ func _recycle_line_material(mat: SpatialMaterial):
 	_line_material_pool.append(mat)
 
 
-func _process_3d_lines_delayed_free(items: Array):
+func _process(delta: float):
+	_process_boxes()
+	_process_lines()
+	_process_canvas()
+
+
+func _process_3d_boxes_delayed_free(items: Array):
 	var i := 0
 	while i < len(items):
 		var d = items[i]
@@ -164,9 +168,8 @@ func _process_3d_lines_delayed_free(items: Array):
 			i += 1
 
 
-func _process(delta: float):
-	_process_3d_lines_delayed_free(_lines)
-	_process_3d_lines_delayed_free(_boxes)
+func _process_boxes():
+	_process_3d_boxes_delayed_free(_boxes)
 
 	# Progressively delete boxes in pool
 	if len(_box_pool) > 0:
@@ -174,6 +177,35 @@ func _process(delta: float):
 		_box_pool.pop_back()
 		last.queue_free()
 
+
+func _process_lines():
+	_line_immediate_geometry.clear()
+	_line_immediate_geometry.begin(Mesh.PRIMITIVE_LINES)
+	
+	for line in _lines:
+		var p1 : Vector3 = line[0]
+		var p2 : Vector3 = line[1]
+		var color : Color = line[2]
+		
+		_line_immediate_geometry.set_color(color)
+		_line_immediate_geometry.add_vertex(p1)
+		_line_immediate_geometry.add_vertex(p2)
+	
+	_line_immediate_geometry.end()
+	
+	# Delayed removal
+	var i := 0
+	while i < len(_lines):
+		var item = _lines[i]
+		var frame = item[3]
+		if frame <= Engine.get_frames_drawn():
+			_lines[i] = _lines[len(_lines) - 1]
+			_lines.pop_back()
+		else:
+			i += 1
+
+
+func _process_canvas():
 	# Remove text lines after some time
 	for key in _texts.keys():
 		var t = _texts[key]
