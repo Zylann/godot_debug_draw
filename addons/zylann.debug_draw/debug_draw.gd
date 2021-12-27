@@ -47,6 +47,15 @@ func _ready():
 	add_child(_line_immediate_geometry)
 
 
+## @brief Draws the unshaded outline of a 3D cube.
+## @param position: world-space position of the center of the cube
+## @param size: size of the cube in world units
+## @param color
+## @param linger_frames: optionally makes the box remain drawn for longer
+func draw_cube(position: Vector3, size: float, color: Color = Color(1,1,1), linger := 0):
+	draw_box(position, Vector3(size, size, size), color, linger)
+
+
 ## @brief Draws the unshaded outline of a 3D box.
 ## @param position: world-space position of the center of the box
 ## @param size: size of the box in world units
