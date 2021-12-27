@@ -74,6 +74,21 @@ func draw_box(position: Vector3, size: Vector3, color: Color = Color(1,1,1), lin
 	})
 
 
+## @brief Draws the unshaded outline of a 3D transformed cube.
+## @param trans: transform of the cube. The basis defines its size.
+## @param color
+func draw_transformed_cube(trans: Transform, color: Color = Color(1,1,1)):
+	var mi := _get_box()
+	var mat := _get_line_material()
+	mat.albedo_color = color
+	mi.material_override = mat
+	mi.transform = Transform(trans.basis, trans.origin - trans.basis * Vector3(0.5,0.5,0.5))
+	_boxes.append({
+		"node": mi,
+		"frame": Engine.get_frames_drawn() + LINES_LINGER_FRAMES
+	})
+
+
 ## @brief Draws the unshaded outline of a 3D box.
 ## @param aabb: world-space box to draw as an AABB
 ## @param color
