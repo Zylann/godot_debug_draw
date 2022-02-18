@@ -52,7 +52,7 @@ func _ready():
 ## @param size: size of the cube in world units
 ## @param color
 ## @param linger_frames: optionally makes the box remain drawn for longer
-func draw_cube(position: Vector3, size: float, color: Color = Color(1,1,1), linger := 0):
+func draw_cube(position: Vector3, size := 1.0, color := Color.white, linger := 0):
 	draw_box(position, Vector3(size, size, size), color, linger)
 
 
@@ -61,7 +61,7 @@ func draw_cube(position: Vector3, size: float, color: Color = Color(1,1,1), ling
 ## @param size: size of the box in world units
 ## @param color
 ## @param linger_frames: optionally makes the box remain drawn for longer
-func draw_box(position: Vector3, size: Vector3, color: Color = Color(1,1,1), linger_frames = 0):
+func draw_box(position: Vector3, size := Vector3.ONE, color := Color.white, linger_frames := 0):
 	var mi := _get_box()
 	var mat := _get_line_material()
 	mat.albedo_color = color
@@ -77,7 +77,7 @@ func draw_box(position: Vector3, size: Vector3, color: Color = Color(1,1,1), lin
 ## @brief Draws the unshaded outline of a 3D transformed cube.
 ## @param trans: transform of the cube. The basis defines its size.
 ## @param color
-func draw_transformed_cube(trans: Transform, color: Color = Color(1,1,1)):
+func draw_transformed_cube(trans: Transform, color := Color.white):
 	var mi := _get_box()
 	var mat := _get_line_material()
 	mat.albedo_color = color
@@ -93,7 +93,7 @@ func draw_transformed_cube(trans: Transform, color: Color = Color(1,1,1)):
 ##        of color red for X, green for Y, and blue for Z.
 ## @param transform
 ## @param scale: extra scale applied on top of the transform
-func draw_axes(transform: Transform, scale = 1.0):
+func draw_axes(transform: Transform, scale := 1.0):
 	draw_ray_3d(transform.origin, transform.basis.x, scale, Color(1,0,0))
 	draw_ray_3d(transform.origin, transform.basis.y, scale, Color(0,1,0))
 	draw_ray_3d(transform.origin, transform.basis.z, scale, Color(0,0,1))
@@ -103,7 +103,7 @@ func draw_axes(transform: Transform, scale = 1.0):
 ## @param aabb: world-space box to draw as an AABB
 ## @param color
 ## @param linger_frames: optionally makes the box remain drawn for longer
-func draw_box_aabb(aabb: AABB, color = Color(1,1,1), linger_frames = 0):
+func draw_box_aabb(aabb: AABB, color := Color.white, linger_frames := 0):
 	var mi := _get_box()
 	var mat := _get_line_material()
 	mat.albedo_color = color
@@ -120,7 +120,7 @@ func draw_box_aabb(aabb: AABB, color = Color(1,1,1), linger_frames = 0):
 ## @param a: begin position in world units
 ## @param b: end position in world units
 ## @param color
-func draw_line_3d(a: Vector3, b: Vector3, color: Color):
+func draw_line_3d(a: Vector3, b: Vector3, color := Color.white):
 	_lines.append([
 		a, b, color,
 		Engine.get_frames_drawn() + LINES_LINGER_FRAMES,
@@ -132,7 +132,7 @@ func draw_line_3d(a: Vector3, b: Vector3, color: Color):
 ## @param direction
 ## @param length: length of the line in world units
 ## @param color
-func draw_ray_3d(origin: Vector3, direction: Vector3, length: float, color : Color):
+func draw_ray_3d(origin: Vector3, direction: Vector3, length := 1.0, color := Color.white):
 	draw_line_3d(origin, origin + direction * length, color)
 
 
