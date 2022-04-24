@@ -6,7 +6,7 @@
 # TODO Thread-safety
 # TODO 2D functions
 
-extends Node
+extends CanvasLayer
 
 ## @brief How many frames HUD text lines remain shown after being invoked.
 const TEXT_LINGER_FRAMES = 5
@@ -35,6 +35,8 @@ var _line_immediate_geometry : ImmediateGeometry
 
 
 func _ready():
+	pause_mode = Node.PAUSE_MODE_PROCESS
+	layer = 100
 	# Get default font
 	# Meh
 	var c := Control.new()
