@@ -9,14 +9,13 @@
 config_version=5
 
 _global_script_classes=[]
-_global_script_class_icons={
-}
+_global_script_class_icons={}
 
 [application]
 
 config/name="Debug Draw"
-config/icon="res://icon.png"
 config/features=PackedStringArray("4.0")
+config/icon="res://icon.png"
 
 [rendering]
 
