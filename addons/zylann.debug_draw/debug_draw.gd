@@ -277,10 +277,10 @@ func _on_CanvasItem_draw():
 
 	for key in _texts.keys():
 		var t = _texts[key]
-		var text := str(key, ": ", t.text, "\n")
-		var ss := font.get_string_size(text, TEXT_SIZE)
+		var text := str(key, ": ", t.text)
+		var ss := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, TEXT_SIZE)
 		ci.draw_rect(Rect2(pos, Vector2(ss.x + xpad * 2, line_height)), TEXT_BG_COLOR)
-		ci.draw_string(font, pos + font_offset, text,HORIZONTAL_ALIGNMENT_LEFT, -1, TEXT_SIZE,
+		ci.draw_string(font, pos + font_offset, text, HORIZONTAL_ALIGNMENT_LEFT, -1, TEXT_SIZE,
 			TEXT_COLOR)
 		pos.y += line_height
 
