@@ -140,7 +140,7 @@ func draw_ray_3d(origin: Vector3, direction: Vector3, length: float, color : Col
 ## Multiple calls with the same `key` will override previous text.
 ## @param key: identifier of the line
 ## @param text: text to show next to the key
-func set_text(key: String, value):
+func set_text(key: String, value=""):
 	_texts[key] = {
 		"text": value if typeof(value) == TYPE_STRING else str(value),
 		"frame": Engine.get_frames_drawn() + TEXT_LINGER_FRAMES
