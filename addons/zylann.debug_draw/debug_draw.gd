@@ -6,7 +6,7 @@
 # TODO Thread-safety
 # TODO 2D functions
 
-extends Node
+extends CanvasLayer
 
 const DebugDrawFont = preload("res://addons/zylann.debug_draw/Hack-Regular.ttf")
 
@@ -39,6 +39,10 @@ var _line_immediate_mesh : ImmediateMesh
 
 
 func _ready():
+	# Always process even if the game is paused
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	# Draw 2D on top of every other CanvasLayer
+	layer = 100
 	_line_immediate_mesh = ImmediateMesh.new()
 	var immediate_mesh_instance = MeshInstance3D.new()
 	immediate_mesh_instance.material_override = _get_line_material()
