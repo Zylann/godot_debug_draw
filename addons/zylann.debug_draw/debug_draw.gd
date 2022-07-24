@@ -15,7 +15,7 @@ const TEXT_LINGER_FRAMES = 5
 ## @brief How many frames lines remain shown after being drawn.
 const LINES_LINGER_FRAMES = 1
 ## @brief Color of the text drawn as HUD
-const TEXT_COLOR = Color(1,1,1)
+const TEXT_COLOR = Color.WHITE
 ## @brief Background color of the text drawn as HUD
 const TEXT_BG_COLOR = Color(0.3, 0.3, 0.3, 0.8)
 ## @brief font size used for debug text
@@ -51,7 +51,7 @@ func _ready():
 ## @param size: size of the cube in world units
 ## @param color
 ## @param linger_frames: optionally makes the box remain drawn for longer
-func draw_cube(position: Vector3, size: float, color: Color = Color(1,1,1), linger := 0):
+func draw_cube(position: Vector3, size: float, color: Color = Color.WHITE, linger := 0):
 	draw_box(position, Vector3(size, size, size), color, linger)
 
 
@@ -60,7 +60,7 @@ func draw_cube(position: Vector3, size: float, color: Color = Color(1,1,1), ling
 ## @param size: size of the box in world units
 ## @param color
 ## @param linger_frames: optionally makes the box remain drawn for longer
-func draw_box(position: Vector3, size: Vector3, color: Color = Color(1,1,1), linger_frames = 0):
+func draw_box(position: Vector3, size: Vector3, color: Color = Color.WHITE, linger_frames = 0):
 	var mi := _get_box()
 	var mat := _get_line_material()
 	mat.albedo_color = color
@@ -76,7 +76,7 @@ func draw_box(position: Vector3, size: Vector3, color: Color = Color(1,1,1), lin
 ## @brief Draws the unshaded outline of a 3D transformed cube.
 ## @param trans: transform of the cube. The basis defines its size.
 ## @param color
-func draw_transformed_cube(trans: Transform3D, color: Color = Color(1,1,1)):
+func draw_transformed_cube(trans: Transform3D, color: Color = Color.WHITE):
 	var mi := _get_box()
 	var mat := _get_line_material()
 	mat.albedo_color = color
@@ -102,7 +102,7 @@ func draw_axes(transform: Transform3D, scale = 1.0):
 ## @param aabb: world-space box to draw as an AABB
 ## @param color
 ## @param linger_frames: optionally makes the box remain drawn for longer
-func draw_box_aabb(aabb: AABB, color = Color(1,1,1), linger_frames = 0):
+func draw_box_aabb(aabb: AABB, color = Color.WHITE, linger_frames = 0):
 	var mi := _get_box()
 	var mat := _get_line_material()
 	mat.albedo_color = color
@@ -152,7 +152,7 @@ func _get_box() -> MeshInstance3D:
 	if len(_box_pool) == 0:
 		mi = MeshInstance3D.new()
 		if _box_mesh == null:
-			_box_mesh = _create_wirecube_mesh(Color(1, 1, 1))
+			_box_mesh = _create_wirecube_mesh(Color.WHITE)
 		mi.mesh = _box_mesh
 		add_child(mi)
 	else:
@@ -281,7 +281,7 @@ func _on_CanvasItem_draw():
 		pos.y += line_height
 
 
-static func _create_wirecube_mesh(color := Color(1,1,1)) -> ArrayMesh:
+static func _create_wirecube_mesh(color := Color.WHITE) -> ArrayMesh:
 	var n = -0.5
 	var p = 0.5
 	var positions := PackedVector3Array([
