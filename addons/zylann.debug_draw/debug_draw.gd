@@ -6,14 +6,14 @@
 # TODO Thread-safety
 # TODO 2D functions
 
-extends Node
+extends CanvasLayer
 
 ## @brief How many frames HUD text lines remain shown after being invoked.
 const TEXT_LINGER_FRAMES = 5
 ## @brief How many frames lines remain shown after being drawn.
 const LINES_LINGER_FRAMES = 1
 ## @brief Color of the text drawn as HUD
-const TEXT_COLOR = Color(1,1,1)
+const TEXT_COLOR = Color.white
 ## @brief Background color of the text drawn as HUD
 const TEXT_BG_COLOR = Color(0.3, 0.3, 0.3, 0.8)
 
@@ -35,6 +35,8 @@ var _line_immediate_geometry : ImmediateGeometry
 
 
 func _ready():
+	pause_mode = Node.PAUSE_MODE_PROCESS
+	layer = 100
 	# Get default font
 	# Meh
 	var c := Control.new()
@@ -153,7 +155,7 @@ func _get_box() -> MeshInstance:
 	if len(_box_pool) == 0:
 		mi = MeshInstance.new()
 		if _box_mesh == null:
-			_box_mesh = _create_wirecube_mesh(Color(1, 1, 1))
+			_box_mesh = _create_wirecube_mesh(Color.white)
 		mi.mesh = _box_mesh
 		add_child(mi)
 	else:
@@ -274,7 +276,7 @@ func _on_CanvasItem_draw():
 		pos.y += line_height
 
 
-static func _create_wirecube_mesh(color := Color(1,1,1)) -> ArrayMesh:
+static func _create_wirecube_mesh(color := Color.white) -> ArrayMesh:
 	var positions := PoolVector3Array([
 		Vector3(0, 0, 0),
 		Vector3(1, 0, 0),
