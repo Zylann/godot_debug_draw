@@ -14,7 +14,7 @@ Example with a singleton named `DebugDraw`:
 ```gdscript
 func _process(delta):
 	# Some test variables, usually you'd get them from game logic
-	var time = OS.get_ticks_msec() / 1000.0
+	var time = Time.get_ticks_msec() / 1000.0
 	var box_pos = Vector3(0, sin(time * 4.0), 0)
 	var line_begin = Vector3(-1, sin(time * 4.0), 0)
 	var line_end = Vector3(1, cos(time * 4.0), 0)
