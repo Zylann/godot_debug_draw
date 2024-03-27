@@ -111,7 +111,7 @@ func draw_box_aabb(aabb: AABB, color = Color.WHITE, linger_frames = 0):
 	var mat := _get_line_material()
 	mat.albedo_color = color
 	mi.material_override = mat
-	mi.position = aabb.position
+	mi.position = aabb.get_center()
 	mi.scale = aabb.size
 	_boxes.append({
 		"node": mi,
