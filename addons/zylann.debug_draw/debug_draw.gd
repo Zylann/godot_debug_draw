@@ -37,6 +37,10 @@ var _line_material_pool := []
 var _lines := []
 var _line_immediate_mesh : ImmediateMesh
 
+var _mesh_instances := []
+var _mesh_instance_pool := []
+var _mesh_material_pool := []
+
 
 func _ready():
 	# Always process even if the game is paused
@@ -100,6 +104,39 @@ func draw_axes(transform: Transform3D, scale = 1.0):
 	draw_ray_3d(transform.origin, transform.basis.x, scale, Color(1,0,0))
 	draw_ray_3d(transform.origin, transform.basis.y, scale, Color(0,1,0))
 	draw_ray_3d(transform.origin, transform.basis.z, scale, Color(0,0,1))
+
+
+## @brief Draws a mesh at the specified transform.
+##        If the mesh's first surface uses line or point primitive,
+##        it is drawn using an unshaded material.
+## @param transform
+## @param color: tint of the mesh.
+func draw_mesh(mesh: Mesh, transform: Transform3D, color := Color(1,1,1)):
+	var mi := _get_mesh_instance()
+	# TODO How do I get the primitive type used by the mesh?
+	# Why on earth can Mesh have virtual methods to implement that,
+	# but no callable method to actually GET that?
+	var mat : Material
+	var uses_lines = false
+	if mesh is ArrayMesh:
+		var pt : int = mesh.surface_get_primitive_type(0)
+		if pt == Mesh.PRIMITIVE_LINES or pt == Mesh.PRIMITIVE_LINE_STRIP or \
+		pt == Mesh.PRIMITIVE_POINTS:
+			mat = _get_line_material()
+			uses_lines = true
+		else:
+			mat = _get_mesh_material()
+	else:
+		mat = _get_mesh_material()
+	mat.albedo_color = color
+	mi.material_override = mat
+	mi.transform = transform
+	mi.mesh = mesh
+	_mesh_instances.append({
+		"node": mi,
+		"uses_lines": uses_lines,
+		"frame": Engine.get_frames_drawn() + LINES_LINGER_FRAMES
+	})
 
 
 ## @brief Draws the unshaded outline of a 3D box.
@@ -186,10 +223,41 @@ func _recycle_line_material(mat: StandardMaterial3D):
 	_line_material_pool.append(mat)
 
 
+func _get_mesh_instance() -> MeshInstance3D:
+	var mi : MeshInstance3D
+	if len(_mesh_instance_pool) == 0:
+		mi = MeshInstance3D.new()
+		add_child(mi)
+	else:
+		mi = _mesh_instance_pool[-1]
+		_mesh_instance_pool.pop_back()
+	return mi
+
+
+func _recycle_mesh_instance(mi: MeshInstance3D):
+	mi.hide()
+	_mesh_instance_pool.append(mi)
+
+
+func _get_mesh_material() -> StandardMaterial3D:
+	var mat : StandardMaterial3D
+	if len(_mesh_material_pool) == 0:
+		mat = StandardMaterial3D.new()
+	else:
+		mat = _mesh_material_pool[-1]
+		_mesh_material_pool.pop_back()
+	return mat
+
+
+func _recycle_mesh_material(mat: StandardMaterial3D):
+	_mesh_material_pool.append(mat)
+
+
 func _process(delta: float):
 	_process_boxes()
 	_process_lines()
 	_process_canvas()
+	_process_meshes()
 
 
 func _process_3d_boxes_delayed_free(items: Array):
@@ -213,6 +281,26 @@ func _process_boxes():
 		var last = _box_pool[-1]
 		_box_pool.pop_back()
 		last.queue_free()
+
+
+func _process_mesh_instance_delayed_free(items: Array):
+	var i := 0
+	while i < len(items):
+		var d = items[i]
+		if d.frame <= Engine.get_frames_drawn():
+			if d.uses_lines:
+				_recycle_line_material(d.node.material_override)
+			else:
+				_recycle_mesh_material(d.node.material_override)
+			d.node.queue_free()
+			items[i] = items[len(items) - 1]
+			items.pop_back()
+		else:
+			i += 1
+
+
+func _process_meshes():
+	_process_mesh_instance_delayed_free(_mesh_instances)
 
 
 func _process_lines():
