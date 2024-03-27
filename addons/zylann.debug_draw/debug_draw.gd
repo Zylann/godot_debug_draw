@@ -111,10 +111,10 @@ func draw_axes(transform: Transform3D, scale = 1.0):
 ##        it is drawn using an unshaded material.
 ## @param transform
 ## @param color: tint of the mesh.
-func draw_mesh(mesh: Mesh, transform: Transform3D, color := Color(1,1,1)):
+func draw_mesh(mesh: Mesh, transform: Transform3D, color := Color.WHITE):
 	var mi := _get_mesh_instance()
 	# TODO How do I get the primitive type used by the mesh?
-	# Why on earth can Mesh have virtual methods to implement that,
+	# Why can Mesh have virtual methods to implement that,
 	# but no callable method to actually GET that?
 	var mat : Material
 	var uses_lines = false
