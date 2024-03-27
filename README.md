@@ -20,11 +20,24 @@ func _process(delta):
 	var line_end = Vector3(1, cos(time * 4.0), 0)
 
 	DebugDraw.draw_box(box_pos, Vector3(1, 2, 1), Color(0, 1, 0))
+	DebugDraw.draw_box_aabb(AABB(Vector3(3, 0, 0), Vector3(2, 1, 1)), Color(0, 1, 0.5))
 	DebugDraw.draw_line_3d(line_begin, line_end, Color(1, 1, 0))
-	DebugDraw.set_text("Time", time)
-	DebugDraw.set_text("Frames drawn", Engine.get_frames_drawn())
-	DebugDraw.set_text("FPS", Engine.get_frames_per_second())
-	DebugDraw.set_text("delta", delta)
+	DebugDraw.draw_axes(Transform3D(Basis().rotated(Vector3(0,1,0), time), Vector3(-2, 0, 0)))
+	DebugDraw.draw_cube(Vector3(-1, 2, 0), 0.1, Color(sin(time * 10.0) * 0.5 + 0.5, 0.5, 0.5))
+	
+	var cube_trans = Transform3D(
+			Basis().scaled(Vector3(2,1,0.5)).rotated(Vector3(0,1,0), time).rotated(Vector3(1,0,0),
+			0.5*time), Vector3(-3.5, 0, 0))
+	DebugDraw.draw_transformed_cube(cube_trans, Color(1,0.5,0))
+	
+	DebugDraw.set_text("Time", str(time))
+	DebugDraw.set_text("Frames drawn", str(Engine.get_frames_drawn()))
+	DebugDraw.set_text("FPS", str(Engine.get_frames_per_second()))
+	DebugDraw.set_text("delta", str(delta))
+	
+	DebugDraw.draw_mesh(_mesh, 
+		Transform3D(Basis().rotated(Vector3(1,1,0.5).normalized(), time), Vector3(3.5,0,3)),
+		Color(0.5+0.5*sin(time*2.0), 0.5+0.5*cos(time*2.0), 1.0))
 ```
 
-![image](https://user-images.githubusercontent.com/1311555/83977160-3f8f5280-a8f6-11ea-8dbb-696f794fcd6a.png)
+![image](https://github.com/Zylann/godot_debug_draw/assets/1311555/10daabb8-a21e-4ec1-a8ff-f1507e31d28c)
