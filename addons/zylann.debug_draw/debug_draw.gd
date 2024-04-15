@@ -372,7 +372,7 @@ func _on_CanvasItem_draw():
 		pos.y += line_height
 
 
-func _create_wirecube_mesh(color := Color.WHITE) -> ArrayMesh:
+static func _create_wirecube_mesh(color := Color.WHITE) -> ArrayMesh:
 	var n = -0.5
 	var p = 0.5
 	var positions := PackedVector3Array([
