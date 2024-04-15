@@ -25,7 +25,6 @@ const TEXT_SIZE = 12
 
 var _canvas_item : CanvasItem = null
 var _texts := {}
-var _font : Font = null
 
 # 3D
 
@@ -98,20 +97,20 @@ func draw_transformed_cube(trans: Transform3D, color: Color = Color.WHITE):
 
 ## @brief Draws the basis of the given transform using 3 lines
 ##        of color red for X, green for Y, and blue for Z.
-## @param transform
-## @param scale: extra scale applied on top of the transform
-func draw_axes(transform: Transform3D, scale = 1.0):
-	draw_ray_3d(transform.origin, transform.basis.x, scale, Color(1,0,0))
-	draw_ray_3d(transform.origin, transform.basis.y, scale, Color(0,1,0))
-	draw_ray_3d(transform.origin, transform.basis.z, scale, Color(0,0,1))
+## @param transform_
+## @param scale_: extra scale applied on top of the transform
+func draw_axes(transform_: Transform3D, scale_ = 1.0):
+	draw_ray_3d(transform_.origin, transform_.basis.x, scale_, Color(1,0,0))
+	draw_ray_3d(transform_.origin, transform_.basis.y, scale_, Color(0,1,0))
+	draw_ray_3d(transform_.origin, transform_.basis.z, scale_, Color(0,0,1))
 
 
 ## @brief Draws a mesh at the specified transform.
 ##        If the mesh's first surface uses line or point primitive,
 ##        it is drawn using an unshaded material.
-## @param transform
+## @param transform_
 ## @param color: tint of the mesh.
-func draw_mesh(mesh: Mesh, transform: Transform3D, color := Color.WHITE):
+func draw_mesh(mesh: Mesh, transform_: Transform3D, color := Color.WHITE):
 	var mi := _get_mesh_instance()
 	# TODO How do I get the primitive type used by the mesh?
 	# Why can Mesh have virtual methods to implement that,
@@ -130,7 +129,7 @@ func draw_mesh(mesh: Mesh, transform: Transform3D, color := Color.WHITE):
 		mat = _get_mesh_material()
 	mat.albedo_color = color
 	mi.material_override = mat
-	mi.transform = transform
+	mi.transform = transform_
 	mi.mesh = mesh
 	_mesh_instances.append({
 		"node": mi,
@@ -253,7 +252,7 @@ func _recycle_mesh_material(mat: StandardMaterial3D):
 	_mesh_material_pool.append(mat)
 
 
-func _process(delta: float):
+func _process(_delta: float):
 	_process_boxes()
 	_process_lines()
 	_process_canvas()
