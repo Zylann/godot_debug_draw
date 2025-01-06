@@ -21,6 +21,9 @@ const TEXT_BG_COLOR = Color(0.3, 0.3, 0.3, 0.8)
 ## @brief font size used for debug text
 const TEXT_SIZE = 12
 
+# Can't use `Engine.get_frames_drawn` because it is always zero in headless mode.
+var _frame_counter := 0
+
 # 2D
 
 var _canvas_item : CanvasItem = null
@@ -77,7 +80,7 @@ func draw_box(position: Vector3, size: Vector3, color: Color = Color.WHITE, ling
 	mi.scale = size
 	_boxes.append({
 		"node": mi,
-		"frame": Engine.get_frames_drawn() + LINES_LINGER_FRAMES + linger_frames
+		"frame": _frame_counter + LINES_LINGER_FRAMES + linger_frames
 	})
 
 
@@ -92,7 +95,7 @@ func draw_transformed_cube(trans: Transform3D, color: Color = Color.WHITE):
 	mi.transform = Transform3D(trans.basis, trans.origin)
 	_boxes.append({
 		"node": mi,
-		"frame": Engine.get_frames_drawn() + LINES_LINGER_FRAMES
+		"frame": _frame_counter + LINES_LINGER_FRAMES
 	})
 
 
@@ -135,7 +138,7 @@ func draw_mesh(mesh: Mesh, transform: Transform3D, color := Color.WHITE):
 	_mesh_instances.append({
 		"node": mi,
 		"uses_lines": uses_lines,
-		"frame": Engine.get_frames_drawn() + LINES_LINGER_FRAMES
+		"frame": _frame_counter + LINES_LINGER_FRAMES
 	})
 
 
@@ -152,7 +155,7 @@ func draw_box_aabb(aabb: AABB, color = Color.WHITE, linger_frames = 0):
 	mi.scale = aabb.size
 	_boxes.append({
 		"node": mi,
-		"frame": Engine.get_frames_drawn() + LINES_LINGER_FRAMES + linger_frames
+		"frame": _frame_counter + LINES_LINGER_FRAMES + linger_frames
 	})
 
 
@@ -163,7 +166,7 @@ func draw_box_aabb(aabb: AABB, color = Color.WHITE, linger_frames = 0):
 func draw_line_3d(a: Vector3, b: Vector3, color: Color):
 	_lines.append([
 		a, b, color,
-		Engine.get_frames_drawn() + LINES_LINGER_FRAMES,
+		_frame_counter + LINES_LINGER_FRAMES,
 	])
 
 
@@ -184,7 +187,7 @@ func draw_ray_3d(origin: Vector3, direction: Vector3, length: float, color : Col
 func set_text(key: String, value=""):
 	_texts[key] = {
 		"text": value if typeof(value) == TYPE_STRING else str(value),
-		"frame": Engine.get_frames_drawn() + TEXT_LINGER_FRAMES
+		"frame": _frame_counter + TEXT_LINGER_FRAMES
 	}
 
 
@@ -254,6 +257,8 @@ func _recycle_mesh_material(mat: StandardMaterial3D):
 
 
 func _process(delta: float):
+	_frame_counter += 1
+	
 	_process_boxes()
 	_process_lines()
 	_process_canvas()
@@ -264,7 +269,7 @@ func _process_3d_boxes_delayed_free(items: Array):
 	var i := 0
 	while i < len(items):
 		var d = items[i]
-		if d.frame <= Engine.get_frames_drawn():
+		if d.frame <= _frame_counter:
 			_recycle_line_material(d.node.material_override)
 			d.node.queue_free()
 			items[i] = items[len(items) - 1]
@@ -287,7 +292,7 @@ func _process_mesh_instance_delayed_free(items: Array):
 	var i := 0
 	while i < len(items):
 		var d = items[i]
-		if d.frame <= Engine.get_frames_drawn():
+		if d.frame <= _frame_counter:
 			if d.uses_lines:
 				_recycle_line_material(d.node.material_override)
 			else:
@@ -328,7 +333,7 @@ func _process_lines():
 	while i < len(_lines):
 		var item = _lines[i]
 		var frame = item[3]
-		if frame <= Engine.get_frames_drawn():
+		if frame <= _frame_counter:
 			_lines[i] = _lines[len(_lines) - 1]
 			_lines.pop_back()
 		else:
@@ -339,7 +344,7 @@ func _process_canvas():
 	# Remove text lines after some time
 	for key in _texts.keys():
 		var t = _texts[key]
-		if t.frame <= Engine.get_frames_drawn():
+		if t.frame <= _frame_counter:
 			_texts.erase(key)
 
 	# Update canvas
@@ -414,4 +419,3 @@ static func _create_wirecube_mesh(color := Color.WHITE) -> ArrayMesh:
 	var mesh := ArrayMesh.new()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_LINES, arrays)
 	return mesh
-
